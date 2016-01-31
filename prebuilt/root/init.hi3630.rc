@@ -1,16 +1,11 @@
 import /init.variant.rc
 import /init.hi3630.usb.rc
-import /init.connectivity.gps.rc
 
 on early-init
-    chmod 0660 /dev/hwlog_switch
-    chown logd system /dev/hwlog_switch
-    chmod 0660 /dev/hwlog_tag
-    chown system system /dev/hwlog_tag
+    mount debugfs debugfs /sys/kernel/debug
+    symlink /data/tombstones /tombstones
 
     write /dev/hwlog_switch 0xFF
-
-    mount debugfs /sys/kernel/debug /sys/kernel/debug mode=0775,gid=1000
 
 on init
     mkdir /mnt/shell/emulated 0700 shell shell
@@ -35,28 +30,26 @@ on init
     symlink /storage/usbdisk /usbdisk
     symlink /storage/usbdisk /mnt/usbdisk
 
-    # hisi
-    write /sys/module/block2mtd/parameters/block2mtd /dev/block/mmcblk0p6
-    write /sys/module/block2mtd/parameters/block2mtd /dev/block/mmcblk0p7
-
-    wait /dev/nve0
-    chmod 0770 /dev/nve0
-    chown root system /dev/nve0
-
-    mkdir /dev/frz
-    mount cgroup none /dev/frz freezer
+    # Preload libjhead for camera
+    export LD_PRELOAD /system/lib/libjhead.so
 
     mkdir /e2fslog 0755 root root
     mount tmpfs tmpfs /e2fslog mode=0755
 
     mkdir /cust
+
     mkdir /splash2
     mkdir /splash2/log 0775 system system
+
     mkdir /3rdmodem 0750 radio radio
+
     mkdir /3rdmodemnvm 0750 radio radio
     mkdir /3rdmodemnvm/viacbp82d 0740 radio radio
+
     mkdir /3rdmodemnvmbkp 0750 radio radio
     mkdir /3rdmodemnvmbkp/viacbp82d 0740 radio radio
+
+    write /sys/module/block2mtd/parameters/block2mtd /dev/block/mmcblk0p6
 
     chown system system /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
     chmod 664 /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
@@ -93,24 +86,21 @@ on init
     chmod 0664 /sys/kernel/set_hmp_thresholds/policy
 
 on fs
-    loglevel 9
-
     mount_all /fstab.hi3630
 
-    mount ext4 /dev/block/platform/hi_mci.0/by-name/cust /cust wait ro nosuid nodev
-    mount ext4 /dev/block/platform/hi_mci.0/by-name/splash2 /splash2 wait rw nosuid nodev
-    mount ext4 /dev/block/platform/hi_mci.0/by-name/3rdmodem /3rdmodem noatime nosuid nodev
-    mount ext4 /dev/block/platform/hi_mci.0/by-name/3rdmodemnvm /3rdmodemnvm noatime nosuid nodev
-    mount ext4 /dev/block/platform/hi_mci.0/by-name/3rdmodemnvmbkp /3rdmodemnvmbkp noatime nosuid nodev
+    mount ext4 /dev/block/platform/ff1fe000.dwmmc0/by-name/cust /cust wait ro nosuid nodev
+    mount ext4 /dev/block/platform/ff1fe000.dwmmc0/by-name/splash2 /splash2 wait rw nosuid nodev
+    mount ext4 /dev/block/platform/ff1fe000.dwmmc0/by-name/3rdmodem /3rdmodem noatime nosuid nodev
+    mount ext4 /dev/block/platform/ff1fe000.dwmmc0/by-name/3rdmodemnvm /3rdmodemnvm noatime nosuid nodev
+    mount ext4 /dev/block/platform/ff1fe000.dwmmc0/by-name/3rdmodemnvmbkp /3rdmodemnvmbkp noatime nosuid nodev
 
     setprop ro.crypto.fuse_sdcard true
 
-    wait /dev/block/platform/hi_mci.0/by-name/oeminfo
+    wait /dev/block/platform/ff1fe000.dwmmc0/by-name/oeminfo
     start oeminfo_nvm
 
 on post-fs-data
     mkdir /data/media 0770 media_rw media_rw
-    mkdir /data/system 0770 system system
 
     # Create the directories used by the Wireless subsystem
     mkdir /data/misc/wifi 0770 wifi wifi
@@ -119,12 +109,6 @@ on post-fs-data
     mkdir /data/misc/dhcp 0770 dhcp dhcp
     # to observe dnsmasq.leases file for dhcp information of soft ap.
     chown dhcp system /data/misc/dhcp
-
-    # Sec storage
-    mkdir /data/sec_storage
-    mount ext4 /dev/block/platform/hi_mci.0/by-name/secure_storage /data/sec_storage nosuid nodev noatime wait crypt discard auto_da_alloc mblk_io_submit data=journal
-    chown root root /data/sec_storage
-    chmod 600 /data/sec_storage
 
     # Audio
     chown media media /sys/kernel/debug/anc_hs/charge_ctl
@@ -180,6 +164,13 @@ on post-fs-data
     chown system system /sys/devices/e852c000.panel_hdmi/framerate
     chmod 660 /sys/devices/e852c000.panel_hdmi/bufisfree
     chmod 660 /sys/devices/e852c000.panel_hdmi/framerate
+
+    # GPS
+    mkdir /data/gps
+    mkdir /data/gps/log
+    chown root system /data/gps
+    chmod 775 /data/gps
+    chmod 770 /data/gps/log
 
     # Baseband
     mkdir /data/hwzd_logs/3rdcp-log 0775 radio nvram
@@ -298,12 +289,6 @@ on post-fs-data
     chmod 0660 /sys/devices/platform/rnic_adapter_interface.0/rnic_adapter
     chown radio radio /sys/devices/platform/rnic_adapter_interface.0/rnic_adapter
 
-    # IRDA
-    chown system irda /dev/ttyAMA0
-    chmod 660 /dev/ttyAMA0
-    chown system irda /sys/class/irda/irda_maxim/power_cfg
-    write /sys/class/irda/irda_maxim/power_cfg 1
-
     setprop vold.post_fs_data_done 1
 
 on boot
@@ -313,9 +298,6 @@ on boot
     chown system system /sys/devices/platform/bcmdhd_wlan.1/wifi_arp_timeout
 
     # Bluetooth
-    chmod 660 /dev/ttyAMA4
-    chown bluetooth bluetooth /dev/ttyAMA4
-
     setprop ro.bt.bdaddr_path "/data/misc/bluedroid/macbt"
     chown bluetooth bluetooth ro.bt.bdaddr_path
     chown bluetooth bluetooth /sys/class/rfkill/rfkill0/type
@@ -326,8 +308,6 @@ on boot
     chmod 664 /proc/bluetooth/sleep/proto
     chown bluetooth bluetooth /proc/bluetooth/sleep/btwrite
     chmod 664 /proc/bluetooth/sleep/btwrite
-    chown bluetooth bluetooth /proc/bluetooth/sleep/btwake
-    chmod 664 /proc/bluetooth/sleep/btwakee
 
     # Change cpu governor
     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor interactive
@@ -405,38 +385,47 @@ service iprenew_bt-pan /system/bin/dhcpcd -n
     disabled
     oneshot
 
+# bugreport is triggered by holding down volume down, volume up and power
+service bugreport /system/bin/dumpstate -d -p -B \
+        -o /data/data/com.android.shell/files/bugreports/bugreport
+    class main
+    disabled
+    oneshot
+    keycodes 114 115 116
+
+# GPS
+service gpsdaemon /system/bin/gpsdeamon
+    class core
+    user root
+    group system
+    oneshot
+
+service gpsd /system/bin/glgps -c /data/gps/gpsconfig.xml
+    socket gps seqpacket 660 root root
+    class main
+    user root
+    group system
+    
+service glgpscl /system/bin/glgpscl -c /data/gps/gpsconfig.xml
+    socket gps seqpacket 660 root root
+    class main
+    user root
+    group system
+    disabled
+
 service atcmdserver /system/bin/atcmdserver
     class main
     oneshot
     disabled
 
-service teecd /system/bin/teecd
-    class late_start
-    user root
-    group root
-
 service oeminfo_nvm /system/bin/oeminfo_nvm_server
     class core
+    #critical
     ioprio rt 4
-
-service hwnffserver /system/bin/hwnffserver
-    class main
-    socket hwnff stream 0660 root mount
-
-service device-monitor /system/bin/device_monitor
-    class main
-    user root
-    group system
 
 service hwpged /system/bin/hwpged
     class main
-    socket MsgHubSock stream 0660 root system
     user root
-
-service hw_cdma_service /system/bin/hw_cdmamodem_service /dev/acm_cdma_log /dev/ttySPI3 /dev/ttySPI1
-    class main
-    user root
-    disabled
 
 service hdmi-daemon /system/bin/hdmi_daemon
     class main
@@ -447,6 +436,3 @@ service hdmi-daemon /system/bin/hdmi_daemon
 service thermal-daemon /system/bin/thermal-daemon
     class main
     group system
-
-on property:ro.hardware.alter=*
-    write /proc/sys/kernel/hardware_alter ${ro.hardware.alter}

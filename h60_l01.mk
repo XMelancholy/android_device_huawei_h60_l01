@@ -32,9 +32,7 @@ PRODUCT_COPY_FILES += \
 # NFC
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/prebuilt/system/etc/libnfc-brcm.conf:system/etc/libnfc-brcm.conf \
-    $(LOCAL_PATH)/prebuilt/system/etc/libnfc-nxp.conf:system/etc/libnfc-nxp.conf \
-    $(LOCAL_PATH)/prebuilt/system/etc/mogolia_libnfc-brcm.conf:system/etc/mogolia_libnfc-brcm.conf \
-    $(LOCAL_PATH)/prebuilt/system/etc/mogolia_libnfc-nxp.conf:system/etc/mogolia_libnfc-nxp.conf
+    $(LOCAL_PATH)/prebuilt/system/etc/libnfc-nxp.conf:system/etc/libnfc-nxp.conf
 
 # Misc
 PRODUCT_COPY_FILES += \
@@ -74,7 +72,6 @@ PRODUCT_COPY_FILES := \
     $(LOCAL_PATH)/prebuilt/root/fstab.hi3630:root/fstab.hi3630 \
     $(LOCAL_PATH)/prebuilt/root/init.hi3630.rc:root/init.hi3630.rc \
     $(LOCAL_PATH)/prebuilt/root/init.hi3630.usb.rc:root/init.hi3630.usb.rc \
-    $(LOCAL_PATH)/prebuilt/root/init.connectivity.gps.rc:root/init.connectivity.gps.rc \
     $(LOCAL_PATH)/prebuilt/root/ueventd.hi3630.rc:root/ueventd.hi3630.rc
 
 # Recovery
@@ -87,7 +84,9 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/recovery/res/images/charger/battery_4.png:root/res/images/charger/battery_4.png \
     $(LOCAL_PATH)/recovery/res/images/charger/battery_5.png:root/res/images/charger/battery_5.png \
     $(LOCAL_PATH)/recovery/res/images/charger/battery_charge.png:root/res/images/charger/battery_charge.png \
-    $(LOCAL_PATH)/recovery/res/images/charger/battery_fail.png:root/res/images/charger/battery_fail.png
+    $(LOCAL_PATH)/recovery/res/images/charger/battery_fail.png:root/res/images/charger/battery_fail.png \
+    $(LOCAL_PATH)/recovery/sbin/hw_chargecheck:root/sbin/hw_chargecheck \
+
 
 # Audio
 PRODUCT_COPY_FILES += \
@@ -99,18 +98,13 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/prebuilt/system/etc/wifi/p2p_supplicant_overlay.conf:system/etc/wifi/p2p_supplicant_overlay.conf \
     $(LOCAL_PATH)/prebuilt/system/etc/wifi/wpa_supplicant_overlay.conf:system/etc/wifi/wpa_supplicant_overlay.conf
 
-# Device state monitor
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/prebuilt/system/etc/device_state_monitor.conf:system/etc/device_state_monitor.conf
-
 # GPS
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/prebuilt/system/etc/gps.conf:system/etc/gps.conf \
-    $(LOCAL_PATH)/prebuilt/system/etc/gps4752.conf:system/etc/gps4752.conf \
-    $(LOCAL_PATH)/prebuilt/system/etc/gps4752config.xml:system/etc/gps4752config.xml \
-    $(LOCAL_PATH)/prebuilt/system/etc/gps4752config_cl.xml:system/etc/gps4752config_cl.xml \
-    $(LOCAL_PATH)/prebuilt/system/etc/gps47531config.xml:system/etc/gps47531config.xml \
-    $(LOCAL_PATH)/prebuilt/system/etc/gps47531config_cl.xml:system/etc/gps47531config_cl.xml
+    $(LOCAL_PATH)/prebuilt/system/etc/gpsconfig.xml:system/etc/gpsconfig.xml \
+    $(LOCAL_PATH)/prebuilt/system/etc/gpsconfig_cl.xml:system/etc/gps47531config_cl.xml \
+    $(LOCAL_PATH)/prebuilt/system/etc/gpsconfig_tlg.xml:system/etc/gpsconfig_tlg.xml
+
 
 # Lights
 PRODUCT_PACKAGES += \
@@ -134,15 +128,13 @@ PRODUCT_COPY_FILES += \
 
 PRODUCT_PACKAGES += \
     mkbootimg-h60 \
-    unpackbootimg-h60
+    unpackbootimg-h60 \
+	 charger-h60
 
 PRODUCT_PACKAGES += \
-    audio.primary.default \
-    audio_policy.stub \
     audio.a2dp.default \
     audio.usb.default \
     audio.r_submix.default \
-    sound_trigger.primary.hi3630 \
     libaudioutils \
     libtinyalsa \
     tinyplay \
@@ -151,27 +143,24 @@ PRODUCT_PACKAGES += \
     tinypcminfo
 
 PRODUCT_PACKAGES += \
-    libnetcmdiface \
-    libwpa_client \
-    dhcpcd.conf \
-    hostapd \
-    wpa_supplicant \
-    wpa_supplicant.conf
+    libnetcmdiface
 
 PRODUCT_PROPERTY_OVERRIDES += \
     wifi.interface=wlan0 \
     wifi.supplicant_scan_interval=15
 
 PRODUCT_PACKAGES += \
-    camera.default
-#    camera.hi3630
+    camera.hi3630
+
+# Graphics
+PRODUCT_PACKAGES += \
+	libsurfaceflinger_client
 
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.opengles.version=196608
 
 PRODUCT_PROPERTY_OVERRIDES += \
-    ro.sf.lcd_density=480 \
-    ro.hardware.alter=Kirin920
+    ro.sf.lcd_density=480
 
 # RIL
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -230,10 +219,6 @@ PRODUCT_TAGS += dalvik.gc.type-precise
 # Set default USB interface
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     persist.sys.usb.config=mtp
-
-# USB OTG support
-PRODUCT_PROPERTY_OVERRIDES += \
-	persist.sys.isUsbOtgEnabled=true
 
 PRODUCT_AAPT_CONFIG := normal hdpi xhdpi xxhdpi
 PRODUCT_AAPT_PREF_CONFIG := xxhdpi

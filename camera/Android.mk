@@ -6,7 +6,6 @@ LOCAL_SRC_FILES := \
     CameraWrapper.cpp
 
 LOCAL_C_INCLUDES := \
-	system/core/include \
     system/media/camera/include
 
 LOCAL_SHARED_LIBRARIES := \

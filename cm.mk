@@ -1,6 +1,8 @@
 # Inherit device configuration
 $(call inherit-product, device/huawei/h60_l01/full_h60_l01.mk)
 
+$(call inherit-product, $(SRC_TARGET_DIR)/product/languages_full.mk)
+
 # Enhanced NFC
 #$(call inherit-product, vendor/cm/config/nfc_enhanced.mk)
 
