@@ -47,11 +47,9 @@ etc/camera/meitu/chengguang.mtdata
 etc/camera/meitu/qingse1.mtdata
 etc/camera/meitu/PSScreen.mtdata
 etc/camera/tracking/targettracking.xml
-etc/camera/davinci/ov5648_foxconn
 etc/camera/davinci/ov5648_foxconn/imgproc.xml
 etc/camera/davinci/hi542/imgproc.xml
 etc/camera/davinci/hi542/cm_foliage.dat
-etc/camera/davinci/s5k4e1ga_foxconn
 etc/camera/davinci/s5k4e1ga_foxconn/imgproc.xml
 etc/camera/davinci/s5k4e1ga_foxconn/cm_foliage.dat
 etc/camera/davinci/ov5648_sunny/imgproc.xml
@@ -92,7 +90,6 @@ etc/camera/davinci/imx214_foxconn/cm_normal_s.dat
 etc/camera/davinci/imx214_foxconn/cm_normal.dat
 etc/camera/davinci/imx214_foxconn/cm_foliage.dat
 etc/camera/davinci/ov8830/imgproc.xml
-etc/camera/smartae/sonyimx134_sunny
 etc/camera/smartae/sonyimx134_sunny/SmartAE.xml
 etc/camera/smartae/imx214_sunny/SmartAE.xml
 etc/camera/smartae/ov5648_foxconn/SmartAE.xml
@@ -106,9 +103,7 @@ etc/camera/smartae/s5k4e1gx_sunny/SmartAE.xml
 etc/camera/smartae/imx214_foxconn/SmartAE.xml
 etc/camera/tornado/SunsetMinMaxTOA.txt
 etc/camera/tornado/NightModelTOA.model
-etc/camera/tornado/sonyimx134_sunny
 etc/camera/tornado/sonyimx134_sunny/TornadoI.ini
-etc/camera/tornado/imx214_sunny
 etc/camera/tornado/imx214_sunny/TornadoI.ini
 etc/camera/tornado/FoliageMinMaxTOA.txt
 etc/camera/tornado/TornadoI.ini
@@ -149,7 +144,6 @@ etc/audio/modem/ascend_modem_algo_BELLA_CLG_normal.xml
 etc/audio/modem/ascend_modem_algo_JAZZ_ULCA_normal.xml
 etc/audio/modem/ascend_modem_algo_PINE_TLG_normal.xml
 etc/audio/tfa9887/coldboot.patch
-etc/audio/tfa9887/BELLA_TLGULG/normal/incall_wb
 etc/audio/tfa9887/BELLA_TLGULG/normal/incall_wb/incall_wb.preset
 etc/audio/tfa9887/BELLA_TLGULG/normal/incall_wb/incall_wb.eq
 etc/audio/tfa9887/BELLA_TLGULG/normal/bypass/bypass.eq
@@ -166,7 +160,6 @@ etc/audio/tfa9887/BELLA_TLGULG/normal/incall_nb/incall_nb.eq
 etc/audio/tfa9887/BELLA_TLGULG/normal/incall_nb/incall_nb.preset
 etc/audio/tfa9887/BELLA_TLGULG/normal/music/music.eq
 etc/audio/tfa9887/BELLA_TLGULG/normal/music/music.preset
-etc/audio/tfa9887/BELLA_TLGULG/ce/incall_wb
 etc/audio/tfa9887/BELLA_TLGULG/ce/incall_wb/incall_wb.preset
 etc/audio/tfa9887/BELLA_TLGULG/ce/incall_wb/incall_wb.eq
 etc/audio/tfa9887/BELLA_TLGULG/ce/bypass/bypass.eq
@@ -185,7 +178,6 @@ etc/audio/tfa9887/BELLA_TLGULG/ce/music/music.preset
 etc/audio/tfa9887/BELLA_TLGULG/dsp_coefficient.config
 etc/audio/tfa9887/BELLA_TLGULG/speaker_model.speaker
 etc/audio/tfa9887/tfa9887_feature.config
-etc/audio/tfa9887/BELLA_ULG/normal/incall_wb
 etc/audio/tfa9887/BELLA_ULG/normal/incall_wb/incall_wb.preset
 etc/audio/tfa9887/BELLA_ULG/normal/incall_wb/incall_wb.eq
 etc/audio/tfa9887/BELLA_ULG/normal/bypass/bypass.eq
@@ -196,7 +188,6 @@ etc/audio/tfa9887/BELLA_ULG/normal/ringtone/ringtone.preset
 etc/audio/tfa9887/BELLA_ULG/normal/ringtone/ringtone.eq
 etc/audio/tfa9887/BELLA_ULG/normal/fm/fm.preset
 etc/audio/tfa9887/BELLA_ULG/normal/fm/fm.eq
-etc/audio/tfa9887/BELLA_ULG/normal/ringtone_hs_spk
 etc/audio/tfa9887/BELLA_ULG/normal/ringtone_hs_spk/ringtone_hs_spk.eq
 etc/audio/tfa9887/BELLA_ULG/normal/ringtone_hs_spk/ringtone_hs_spk.preset
 etc/audio/tfa9887/BELLA_ULG/normal/incall_nb/incall_nb.eq
@@ -255,7 +246,6 @@ etc/audio/tfa9887/default/ce/music/music.eq
 etc/audio/tfa9887/default/ce/music/music.preset
 etc/audio/tfa9887/default/dsp_coefficient.config
 etc/audio/tfa9887/default/speaker_model.speaker
-etc/audio/tfa9887/BELLA_CLG/normal/incall_wb
 etc/audio/tfa9887/BELLA_CLG/normal/incall_wb/incall_wb.preset
 etc/audio/tfa9887/BELLA_CLG/normal/incall_wb/incall_wb.eq
 etc/audio/tfa9887/BELLA_CLG/normal/bypass/bypass.eq
@@ -369,7 +359,6 @@ etc/audio/mbdrc/ascend_mbdrc_algo_BELLA_TLGULG_normal.xml
 etc/audio/mbdrc/ascend_mbdrc_algo_JAZZ_CLG_normal.xml
 etc/audio/mbdrc/ascend_mbdrc_algo_PINE_TLG_normal.xml
 etc/device_state_monitor.conf
-etc/modemConfig/balongLTE
 etc/modemConfig/balongLTE/all.cfg
 etc/modemConfig/balongLTE/basic_name
 etc/modemConfig/balong/all.cmf
@@ -560,7 +549,7 @@ vendor/firmware/nvram4334_hw_jazz_ulca.txt
 vendor/firmware/nvram4334_hw_bella_clg.txt
 vendor/firmware/fw_bcm4334_p2p_hw.bin
 vendor/firmware/nvram4334_hw_jazz_clg.txt
-vendor/firmware/nvram4334_hw_bella_ulg.tx
+vendor/firmware/nvram4334_hw_bella_ulg.txt
 vendor/firmware/nvram4334_hw_pine_ulgtlg.txt
 vendor/firmware/libpn547_fw.so
 vendor/firmware/nvram4339_hw_fifa_clg.txt
