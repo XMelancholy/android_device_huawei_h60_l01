@@ -1,0 +1,80 @@
+#	modified:   system/core/include/android/log.h
+#	modified:   system/core/libion/Android.mk
+#	modified:   system/core/liblog/Android.mk
+#	modified:   system/core/liblog/logd_write.c
+
+diff --git a/system/core/include/android/log.h b/system/core/include/android/log.h
+index 0ea4c29..e6a46ef 100644
+--- a/system/core/include/android/log.h
++++ b/system/core/include/android/log.h
+@@ -93,6 +93,10 @@ typedef enum android_LogPriority {
+  */
+ int __android_log_write(int prio, const char *tag, const char *text);
+ 
++#ifdef HISILICON_HI3630
++int __android_logPower_print();
++#endif
++
+ /*
+  * Send a formatted string to the log, used like printf(fmt,...)
+  */
+diff --git a/system/core/libion/Android.mk b/system/core/libion/Android.mk
+index 0f023d6..ceb9078 100644
+--- a/system/core/libion/Android.mk
++++ b/system/core/libion/Android.mk
+@@ -1,3 +1,4 @@
++ifeq ($(BOARD_USE_CUSTOM_LIBION),)
+ ifneq ($(TARGET_BOARD_PLATFORM),omap3)
+ 
+ LOCAL_PATH:= $(call my-dir)
+@@ -20,3 +21,4 @@ LOCAL_SHARED_LIBRARIES := liblog
+ include $(BUILD_EXECUTABLE)
+ 
+ endif
++endif
+diff --git a/system/core/liblog/Android.mk b/system/core/liblog/Android.mk
+index 526943f..1b9e73b 100644
+--- a/system/core/liblog/Android.mk
++++ b/system/core/liblog/Android.mk
+@@ -74,12 +74,18 @@ endif
+ # Shared and static library for target
+ # ========================================================
+ include $(CLEAR_VARS)
++ifeq ($(TARGET_BOARD_PLATFORM), hi3630)
++    LOCAL_CFLAGS += -DHISILICON_HI3630
++endif
+ LOCAL_CFLAGS += $(LIBLOG_CFLAGS)
+ LOCAL_MODULE := liblog
+ LOCAL_SRC_FILES := $(liblog_sources)
+ include $(BUILD_STATIC_LIBRARY)
+ 
+ include $(CLEAR_VARS)
++ifeq ($(TARGET_BOARD_PLATFORM), hi3630)
++    LOCAL_CFLAGS += -DHISILICON_HI3630
++endif
+ LOCAL_CFLAGS += $(LIBLOG_CFLAGS)
+ LOCAL_MODULE := liblog
+ LOCAL_WHOLE_STATIC_LIBRARIES := liblog
+diff --git a/system/core/liblog/logd_write.c b/system/core/liblog/logd_write.c
+index 9e76a8e..a2f0751 100644
+--- a/system/core/liblog/logd_write.c
++++ b/system/core/liblog/logd_write.c
+@@ -346,6 +346,18 @@ int __android_log_vprint(int prio, const char *tag, const char *fmt, va_list ap)
+     return __android_log_write(prio, tag, buf);
+ }
+ 
++#ifdef HISILICON_HI3630
++int __android_log_exception_write()
++{
++    return 0;
++}
++
++int __android_logPower_print()
++{
++    return 0;
++}
++#endif
++
+ int __android_log_print(int prio, const char *tag, const char *fmt, ...)
+ {
+     va_list ap;

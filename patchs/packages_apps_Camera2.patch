@@ -1,0 +1,115 @@
+#	modified:   packages/apps/Camera2/res/values-zh-rCN/cm_strings.xml
+#	modified:   packages/apps/Camera2/res/values/arrays.xml
+#	modified:   packages/apps/Camera2/res/values/cm_strings.xml
+#	modified:   packages/apps/Camera2/src/com/android/camera/VideoModule.java
+
+diff --git a/packages/apps/Camera2/res/values-zh-rCN/cm_strings.xml b/packages/apps/Camera2/res/values-zh-rCN/cm_strings.xml
+index a0c1358..c62717e 100755
+--- a/packages/apps/Camera2/res/values-zh-rCN/cm_strings.xml
++++ b/packages/apps/Camera2/res/values-zh-rCN/cm_strings.xml
+@@ -34,6 +34,7 @@
+   <string name="pref_camera_picturesize_entry_6mp_wide">600 万像素 (16:9)</string>
+   <string name="pref_camera_picturesize_entry_4_5mp">450 万像素</string>
+   <string name="pref_camera_picturesize_entry_4mp">400 万像素</string>
++  <string name="pref_camera_picturesize_entry_3.8mp">380 万像素</string>
+   <string name="pref_camera_picturesize_entry_3_7mp_wide">370 万像素 (16:9)</string>
+   <string name="pref_camera_picturesize_entry_2_5mp">250 万像素</string>
+   <string name="pref_camera_picturesize_entry_2_1mp_wide">210 万像素 (16:9)</string>
+diff --git a/packages/apps/Camera2/res/values/arrays.xml b/packages/apps/Camera2/res/values/arrays.xml
+index b1284b7..25e213a 100755
+--- a/packages/apps/Camera2/res/values/arrays.xml
++++ b/packages/apps/Camera2/res/values/arrays.xml
+@@ -198,9 +198,12 @@
+         <item>@string/pref_camera_picturesize_entry_5mp</item>
+         <item>@string/pref_camera_picturesize_entry_5mp</item>
+         <item>@string/pref_camera_picturesize_entry_5mp</item>
++        <item>@string/pref_camera_picturesize_entry_5mp</item>
+         <item>@string/pref_camera_picturesize_entry_4_5mp</item>
+         <item>@string/pref_camera_picturesize_entry_4mp_wide</item>
+         <item>@string/pref_camera_picturesize_entry_4mp</item>
++        <item>@string/pref_camera_picturesize_entry_3_8mp</item>
++        <item>@string/pref_camera_picturesize_entry_3_7mp_wide</item>
+         <item>@string/pref_camera_picturesize_entry_3_7mp_wide</item>
+         <item>@string/pref_camera_picturesize_entry_3mp</item>
+         <item>@string/pref_camera_picturesize_entry_3mp</item>
+@@ -212,11 +215,13 @@
+         <item>@string/pref_camera_picturesize_entry_1_5mp</item>
+         <item>@string/pref_camera_picturesize_entry_1_3mp</item>
+         <item>@string/pref_camera_picturesize_entry_1mp</item>
++        <item>@string/pref_camera_picturesize_entry_1mp</item>
+         <item>@string/pref_camera_picturesize_entry_wxga</item>
+         <item>@string/pref_camera_picturesize_entry_xga</item>
+         <item>@string/pref_camera_picturesize_entry_svga</item>
+         <item>@string/pref_camera_picturesize_entry_wvga</item>
+         <item>@string/pref_camera_picturesize_entry_vga</item>
++        <item>@string/pref_camera_picturesize_entry_vga</item>
+         <item>@string/pref_camera_picturesize_entry_nhd_wide</item>
+         <item>@string/pref_camera_picturesize_entry_wqvga</item>
+         <item>@string/pref_camera_picturesize_entry_qvga</item>
+@@ -246,12 +251,15 @@
+         <item>3264x1968</item>
+         <item>3264x1840</item>
+         <item>3264x1836</item>
++        <item>2592x1952</item>
+         <item>2592x1944</item>
+         <item>2592x1936</item>
+         <item>2560x1920</item>
+         <item>2592x1728</item>
+         <item>2688x1520</item>
+         <item>2560x1536</item>
++        <item>1952x1952</item>
++        <item>2592x1456</item>
+         <item>2560x1440</item>
+         <item>2048x1536</item>
+         <item>2048x1520</item>
+@@ -262,12 +270,14 @@
+         <item>1392x1392</item>
+         <item>1600x960</item>
+         <item>1280x960</item>
++        <item>1280x800</item>
+         <item>1280x720</item>
+         <item>1024x768</item>
+         <item>1024x600</item>
+         <item>800x600</item>
+         <item>800x480</item>
+         <item>640x480</item>
++        <item>640x368</item>
+         <item>640x360</item>
+         <item>480x320</item>
+         <item>320x240</item>
+diff --git a/packages/apps/Camera2/res/values/cm_strings.xml b/packages/apps/Camera2/res/values/cm_strings.xml
+index 47911f2..ac4835c 100755
+--- a/packages/apps/Camera2/res/values/cm_strings.xml
++++ b/packages/apps/Camera2/res/values/cm_strings.xml
+@@ -51,6 +51,8 @@
+     <string name="pref_camera_picturesize_entry_4_5mp">4.5M pixels</string>
+     <!-- Settings screen, dialog choice for 4 megapixels picture size [CHAR LIMIT=20] -->
+     <string name="pref_camera_picturesize_entry_4mp">4M pixels</string>
++    <!-- Settings screen, dialog choice for 3.8 megapixels picture size [CHAR LIMIT=15] -->
++    <string name="pref_camera_picturesize_entry_3_8mp">3.8M pixels</string>
+     <!-- Settings screen, dialog choice for 3.7 megapixels picture size [CHAR LIMIT=15] -->
+     <string name="pref_camera_picturesize_entry_3_7mp_wide">3.7M pixels (16:9)</string>
+     <!-- Settings screen, dialog choice for 2.5 megapixels picture size [CHAR LIMIT=15] -->
+diff --git a/packages/apps/Camera2/src/com/android/camera/VideoModule.java b/packages/apps/Camera2/src/com/android/camera/VideoModule.java
+index 72e5b32..2335ce7 100755
+--- a/packages/apps/Camera2/src/com/android/camera/VideoModule.java
++++ b/packages/apps/Camera2/src/com/android/camera/VideoModule.java
+@@ -2081,17 +2081,11 @@ public class VideoModule implements CameraModule,
+             List<VideoEncoderCap> videoEncoders = EncoderCapabilities.getVideoEncoders();
+             for (VideoEncoderCap videoEncoder: videoEncoders) {
+                 if (videoEncoder.mCodec == mVideoEncoder){
+-                    int maxBitrate = (videoEncoder.mMaxHFRFrameWidth *
+-                                     videoEncoder.mMaxHFRFrameHeight *
+-                                     videoEncoder.mMaxHFRMode);
++                    int maxBitrate = 0;
+                     if (inputBitrate > maxBitrate ){
+                             Log.e(TAG,"Selected codec "+mVideoEncoder+
+                                 " does not support HFR " + highFrameRate + " with "+ videoWidth
+                                 + "x" + videoHeight +" resolution");
+-                            Log.e(TAG, "Codec capabilities: " +
+-                                "mMaxHFRFrameWidth = " + videoEncoder.mMaxHFRFrameWidth + " , "+
+-                                "mMaxHFRFrameHeight = " + videoEncoder.mMaxHFRFrameHeight + " , "+
+-                                "mMaxHFRMode = " + videoEncoder.mMaxHFRMode);
+                             mUnsupportedHFRVideoSize = true;
+                     }
+                     break;

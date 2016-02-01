@@ -1,0 +1,26 @@
+#	modified:   build/core/tasks/kernel.mk
+
+diff --git a/build/core/tasks/kernel.mk b/build/core/tasks/kernel.mk
+index febf3ef..18601ae 100644
+--- a/build/core/tasks/kernel.mk
++++ b/build/core/tasks/kernel.mk
+@@ -178,6 +178,10 @@ $(KERNEL_OUT):
+ 	mkdir -p $(KERNEL_OUT)
+ 	mkdir -p $(KERNEL_MODULES_OUT)
+ 
++ifdef BOARD_CUSTOM_KERNEL_MK
++include $(BOARD_CUSTOM_KERNEL_MK)
++else
++
+ $(KERNEL_CONFIG): $(KERNEL_OUT)
+ 	$(MAKE) $(MAKE_FLAGS) -C $(KERNEL_SRC) O=$(KERNEL_OUT) ARCH=$(TARGET_ARCH) $(ARM_CROSS_COMPILE) VARIANT_DEFCONFIG=$(VARIANT_DEFCONFIG) SELINUX_DEFCONFIG=$(SELINUX_DEFCONFIG) $(KERNEL_DEFCONFIG)
+ 
+@@ -192,6 +196,8 @@ TARGET_KERNEL_BINARIES: $(KERNEL_OUT) $(KERNEL_CONFIG) $(KERNEL_HEADERS_INSTALL)
+ 	$(mv-modules)
+ 	$(clean-module-folder)
+ 
++endif # BOARD_CUSTOM_KERNEL_MK
++
+ $(TARGET_KERNEL_MODULES): TARGET_KERNEL_BINARIES
+ 
+ $(TARGET_PREBUILT_INT_KERNEL): $(TARGET_KERNEL_MODULES)

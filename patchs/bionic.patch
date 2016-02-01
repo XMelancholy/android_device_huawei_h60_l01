@@ -1,0 +1,76 @@
+#	modified:   bionic/libc/Android.mk
+#	new file:   bionic/libc/bionic/hmp_sched_setaffinity.cpp
+#	modified:   bionic/libc/include/sched.h
+
+diff --git a/bionic/libc/Android.mk b/bionic/libc/Android.mk
+index da193fb..42be686 100644
+--- a/bionic/libc/Android.mk
++++ b/bionic/libc/Android.mk
+@@ -245,6 +245,12 @@ libc_bionic_src_files := \
+     bionic/wait.cpp \
+     bionic/wchar.cpp \
+ 
++ifeq ($(TARGET_BOARD_PLATFORM), hi3630)
++libc_bionic_src_files += \
++	 bionic/hmp_sched_setaffinity.cpp \
++LOCAL_CFLAGS += -DHISILICON_HI3630
++endif
++
+ libc_tzcode_src_files := \
+     tzcode/asctime.c \
+     tzcode/difftime.c \
+diff --git a/bionic/libc/bionic/hmp_sched_setaffinity.cpp b/bionic/libc/bionic/hmp_sched_setaffinity.cpp
+new file mode 100644
+index 0000000..eeb3333
+--- /dev/null
++++ b/bionic/libc/bionic/hmp_sched_setaffinity.cpp
+@@ -0,0 +1,34 @@
++/*
++ * Copyright (C) 2015 The CyanogenMod Project
++ * All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ *  * Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ *  * Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in
++ *    the documentation and/or other materials provided with the
++ *    distribution.
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
++ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
++ * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
++ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
++ * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
++ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
++ * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
++ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
++ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
++ * SUCH DAMAGE.
++ */
++
++#define _GNU_SOURCE 1
++#include <sched.h>
++
++int hmp_sched_setaffinity(void) {
++    return 0;
++}
+diff --git a/bionic/libc/include/sched.h b/bionic/libc/include/sched.h
+index 4d7d8c6..f985753 100644
+--- a/bionic/libc/include/sched.h
++++ b/bionic/libc/include/sched.h
+@@ -103,6 +103,10 @@ extern int sched_setaffinity(pid_t pid, size_t setsize, const cpu_set_t* set);
+ 
+ extern int sched_getaffinity(pid_t pid, size_t setsize, cpu_set_t* set);
+ 
++#ifdef HISILICON_HI3630
++extern int hmp_sched_setaffinity(void);
++#endif
++
+ /* Provide optimized implementation for 32-bit cpu_set_t */
+ #if CPU_SETSIZE == __CPU_BITS
+ 

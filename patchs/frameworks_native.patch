@@ -1,0 +1,323 @@
+#	modified:   frameworks/native/cmds/servicemanager/Android.mk
+#	modified:   frameworks/native/cmds/servicemanager/service_manager.c
+#	modified:   frameworks/native/include/gui/BufferQueue.h
+#	modified:   frameworks/native/include/gui/ConsumerBase.h
+#	modified:   frameworks/native/include/gui/GLConsumer.h
+#	modified:   frameworks/native/include/gui/GuiConfig.h
+#	modified:   frameworks/native/include/gui/IGraphicBufferProducer.h
+#	modified:   frameworks/native/libs/gui/Android.mk
+#	modified:   frameworks/native/libs/gui/BufferQueue.cpp
+#	modified:   frameworks/native/libs/gui/ConsumerBase.cpp
+#	modified:   frameworks/native/libs/gui/GLConsumer.cpp
+#	modified:   frameworks/native/libs/gui/IGraphicBufferProducer.cpp
+#	modified:   frameworks/native/libs/gui/Surface.cpp
+#	modified:   frameworks/native/services/surfaceflinger/DisplayHardware/VirtualDisplaySurface.cpp
+#	modified:   frameworks/native/services/surfaceflinger/DisplayHardware/VirtualDisplaySurface.h
+
+diff --git a/frameworks/native/cmds/servicemanager/Android.mk b/frameworks/native/cmds/servicemanager/Android.mk
+index 07860e5..a0920c5 100644
+--- a/frameworks/native/cmds/servicemanager/Android.mk
++++ b/frameworks/native/cmds/servicemanager/Android.mk
+@@ -15,4 +15,11 @@ endif
+ ifeq ($(BOARD_USE_SECTVOUT),true)
+     LOCAL_CFLAGS += -DSECTVOUT
+ endif
++ifeq ($(BOARD_USE_ICOS_MIRROR_SERVICE),true)
++    LOCAL_CFLAGS += -DICOS_MIRROR_SERVICE
++endif
++ifeq ($(BOARD_USE_HUAWEI_SERVICES),true)
++    LOCAL_CFLAGS += -DHUAWEI_SERVICES
++endif
++
+ include $(BUILD_EXECUTABLE)
+diff --git a/frameworks/native/cmds/servicemanager/service_manager.c b/frameworks/native/cmds/servicemanager/service_manager.c
+index 1aa2ade..a9c78a1 100644
+--- a/frameworks/native/cmds/servicemanager/service_manager.c
++++ b/frameworks/native/cmds/servicemanager/service_manager.c
+@@ -39,6 +39,13 @@ static struct {
+ #ifdef SECTVOUT
+     { AID_MEDIA, "SecTVOutService" },
+ #endif
++#ifdef ICOS_MIRROR_SERVICE
++    { AID_MEDIA, "icos_mirror_service_audio" },
++#endif
++#ifdef HUAWEI_SERVICES
++    { AID_MEDIA, "post.camera" },
++    { AID_MEDIA, "huawei.audioalgoservice" },
++#endif
+     { AID_DRM,   "drm.drmManager" },
+     { AID_NFC,   "nfc" },
+     { AID_BLUETOOTH, "bluetooth" },
+diff --git a/frameworks/native/include/gui/BufferQueue.h b/frameworks/native/include/gui/BufferQueue.h
+index 942a091..09bc435 100644
+--- a/frameworks/native/include/gui/BufferQueue.h
++++ b/frameworks/native/include/gui/BufferQueue.h
+@@ -175,9 +175,14 @@ public:
+     // Some values are returned in the output struct: the current settings
+     // for default width and height, the current transform hint, and the
+     // number of queued buffers.
++
++#ifdef HISILICON_HI3630
++    virtual status_t queueBuffer(int buf, 
++            const QueueBufferInput& input, QueueBufferOutput* output, Rect* dirtyRect);
++#else
+     virtual status_t queueBuffer(int buf,
+             const QueueBufferInput& input, QueueBufferOutput* output);
+-
++#endif
+     // cancelBuffer returns a dequeued buffer to the BufferQueue, but doesn't
+     // queue it for use by the consumer.
+     //
+diff --git a/frameworks/native/include/gui/ConsumerBase.h b/frameworks/native/include/gui/ConsumerBase.h
+index fb21185..2be3d7a 100644
+--- a/frameworks/native/include/gui/ConsumerBase.h
++++ b/frameworks/native/include/gui/ConsumerBase.h
+@@ -107,6 +107,10 @@ protected:
+     virtual void onFrameAvailable();
+     virtual void onBuffersReleased();
+ 
++#ifdef HISILICON_HI3630
++    virtual void onSetRefreshDirty(const Rect& dirtyRect);
++#endif
++
+     // freeBufferLocked frees up the given buffer slot.  If the slot has been
+     // initialized this will release the reference to the GraphicBuffer in that
+     // slot.  Otherwise it has no effect.
+diff --git a/frameworks/native/include/gui/GLConsumer.h b/frameworks/native/include/gui/GLConsumer.h
+index f08189f..e125ad3 100644
+--- a/frameworks/native/include/gui/GLConsumer.h
++++ b/frameworks/native/include/gui/GLConsumer.h
+@@ -94,6 +94,10 @@ public:
+     // This calls doGLFenceWait to ensure proper synchronization.
+     status_t updateTexImage();
+ 
++#ifdef HISILICON_HI3630
++    status_t updateTexImageLayer(sp<GraphicBuffer> graphicBuffer);
++#endif
++
+     // releaseTexImage releases the texture acquired in updateTexImage().
+     // This is intended to be used in single buffer mode.
+     //
+diff --git a/frameworks/native/include/gui/GuiConfig.h b/frameworks/native/include/gui/GuiConfig.h
+index b020ed9..91c3a18 100644
+--- a/frameworks/native/include/gui/GuiConfig.h
++++ b/frameworks/native/include/gui/GuiConfig.h
+@@ -24,6 +24,11 @@ namespace android {
+ // Append the libgui configuration details to configStr.
+ void appendGuiConfigString(String8& configStr);
+ 
++#ifdef HISILICON_HI3630
++int DISPLAY_SIZE_DENSITY_VALUE;
++int DISPLAY_SIZE_DENSITY;
++#endif
++
+ }; // namespace android
+ 
+ #endif /*ANDROID_GUI_CONFIG_H*/
+diff --git a/frameworks/native/include/gui/IGraphicBufferProducer.h b/frameworks/native/include/gui/IGraphicBufferProducer.h
+index f3bf177..2935620 100644
+--- a/frameworks/native/include/gui/IGraphicBufferProducer.h
++++ b/frameworks/native/include/gui/IGraphicBufferProducer.h
+@@ -201,9 +201,13 @@ public:
+         uint32_t numPendingBuffers;
+     };
+ 
++#ifdef HISILICON_HI3630
++    virtual status_t queueBuffer(int slot, 
++            const QueueBufferInput& input, QueueBufferOutput* output, Rect* dirtyRect) = 0;
++#else
+     virtual status_t queueBuffer(int slot,
+             const QueueBufferInput& input, QueueBufferOutput* output) = 0;
+-
++#endif
+     // cancelBuffer indicates that the client does not wish to fill in the
+     // buffer associated with slot and transfers ownership of the slot back to
+     // the server.
+diff --git a/frameworks/native/libs/gui/Android.mk b/frameworks/native/libs/gui/Android.mk
+index e3557d4..8ee946c 100644
+--- a/frameworks/native/libs/gui/Android.mk
++++ b/frameworks/native/libs/gui/Android.mk
+@@ -61,6 +61,9 @@ endif
+ 
+ LOCAL_MODULE:= libgui
+ 
++ifeq ($(TARGET_BOARD_PLATFORM), hi3630)
++	LOCAL_CFLAGS += -DHISILICON_HI3630
++endif
+ ifeq ($(TARGET_BOARD_PLATFORM), tegra)
+ 	LOCAL_CFLAGS += -DDONT_USE_FENCE_SYNC
+ endif
+diff --git a/frameworks/native/libs/gui/BufferQueue.cpp b/frameworks/native/libs/gui/BufferQueue.cpp
+index 146f534..ab6c6c2 100644
+--- a/frameworks/native/libs/gui/BufferQueue.cpp
++++ b/frameworks/native/libs/gui/BufferQueue.cpp
+@@ -475,8 +475,13 @@ status_t BufferQueue::dequeueBuffer(int *outBuf, sp<Fence>* outFence, bool async
+     return returnFlags;
+ }
+ 
++#ifdef HISILICON_HI3630
++status_t BufferQueue::queueBuffer(int buf, 
++        const QueueBufferInput& input, QueueBufferOutput* output, Rect* dirtyRect) {
++#else
+ status_t BufferQueue::queueBuffer(int buf,
+         const QueueBufferInput& input, QueueBufferOutput* output) {
++#endif
+     ATRACE_CALL();
+     ATRACE_BUFFER_INDEX(buf);
+ 
+diff --git a/frameworks/native/libs/gui/ConsumerBase.cpp b/frameworks/native/libs/gui/ConsumerBase.cpp
+index c4ec857..1068628 100644
+--- a/frameworks/native/libs/gui/ConsumerBase.cpp
++++ b/frameworks/native/libs/gui/ConsumerBase.cpp
+@@ -89,6 +89,12 @@ void ConsumerBase::onLastStrongRef(const void* id) {
+     abandon();
+ }
+ 
++#ifdef HISILICON_HI3630
++void ConsumerBase::onSetRefreshDirty(const Rect& dirtyRect) {
++    CB_LOGV("onSetRefreshDirty");
++}
++#endif
++
+ void ConsumerBase::freeBufferLocked(int slotIndex) {
+     CB_LOGV("freeBufferLocked: slotIndex=%d", slotIndex);
+     mSlots[slotIndex].mGraphicBuffer = 0;
+diff --git a/frameworks/native/libs/gui/GLConsumer.cpp b/frameworks/native/libs/gui/GLConsumer.cpp
+index de83a20..479ce0b 100644
+--- a/frameworks/native/libs/gui/GLConsumer.cpp
++++ b/frameworks/native/libs/gui/GLConsumer.cpp
+@@ -207,6 +207,12 @@ status_t GLConsumer::updateTexImage() {
+     return bindTextureImageLocked();
+ }
+ 
++#ifdef HISILICON_HI3630
++status_t GLConsumer::updateTexImageLayer(sp<GraphicBuffer> graphicBuffer) {
++    ST_LOGV("updateTexImageLayer");
++    return NO_ERROR;
++}
++#endif
+ 
+ status_t GLConsumer::releaseTexImage() {
+     ATRACE_CALL();
+diff --git a/frameworks/native/libs/gui/IGraphicBufferProducer.cpp b/frameworks/native/libs/gui/IGraphicBufferProducer.cpp
+index c5fa522..cb10869 100644
+--- a/frameworks/native/libs/gui/IGraphicBufferProducer.cpp
++++ b/frameworks/native/libs/gui/IGraphicBufferProducer.cpp
+@@ -107,8 +107,13 @@ public:
+         return result;
+     }
+ 
++#ifdef HISILICON_HI3630
++    virtual status_t queueBuffer(int buf, 
++            const QueueBufferInput& input, QueueBufferOutput* output, Rect* dirtyRect) {
++#else
+     virtual status_t queueBuffer(int buf,
+             const QueueBufferInput& input, QueueBufferOutput* output) {
++#endif
+         Parcel data, reply;
+         data.writeInterfaceToken(IGraphicBufferProducer::getInterfaceDescriptor());
+         data.writeInt32(buf);
+@@ -249,7 +254,12 @@ status_t BnGraphicBufferProducer::onTransact(
+             QueueBufferOutput* const output =
+                     reinterpret_cast<QueueBufferOutput *>(
+                             reply->writeInplace(sizeof(QueueBufferOutput)));
++#ifdef HISILICON_HI3630
++            Rect dirtyRect;
++            status_t result = queueBuffer(buf, input, output, &dirtyRect);
++#else
+             status_t result = queueBuffer(buf, input, output);
++#endif
+             reply->writeInt32(result);
+             return NO_ERROR;
+         } break;
+diff --git a/frameworks/native/libs/gui/Surface.cpp b/frameworks/native/libs/gui/Surface.cpp
+index f5276a2..77dbede 100644
+--- a/frameworks/native/libs/gui/Surface.cpp
++++ b/frameworks/native/libs/gui/Surface.cpp
+@@ -326,7 +326,15 @@ int Surface::queueBuffer(android_native_buffer_t* buffer, int fenceFd) {
+             dirtyRect,
+ #endif
+             mScalingMode, mTransform, mSwapIntervalZero,fence);
++#ifdef HISILICON_HI3630
++    int drWidth = mUserWidth ? mUserWidth : mDefaultWidth;
++    int drHeight = mUserHeight ? mUserHeight : mDefaultHeight;
++    Rect dirtyRect = Rect(drWidth, drHeight);
++
++    status_t err = mGraphicBufferProducer->queueBuffer(i, input, &output, &dirtyRect);
++#else
+     status_t err = mGraphicBufferProducer->queueBuffer(i, input, &output);
++#endif
+     if (err != OK)  {
+         ALOGE("queueBuffer: error queuing buffer to SurfaceTexture, %d", err);
+     }
+diff --git a/frameworks/native/services/surfaceflinger/DisplayHardware/VirtualDisplaySurface.cpp b/frameworks/native/services/surfaceflinger/DisplayHardware/VirtualDisplaySurface.cpp
+index c138f6a..3956621 100644
+--- a/frameworks/native/services/surfaceflinger/DisplayHardware/VirtualDisplaySurface.cpp
++++ b/frameworks/native/services/surfaceflinger/DisplayHardware/VirtualDisplaySurface.cpp
+@@ -226,6 +226,9 @@ void VirtualDisplaySurface::onFrameCommitted() {
+     if (mOutputProducerSlot >= 0) {
+         int sslot = mapProducer2SourceSlot(SOURCE_SINK, mOutputProducerSlot);
+         QueueBufferOutput qbo;
++#ifdef HISILICON_HI3630
++        Rect dirtyRect;
++#endif
+         sp<Fence> outFence = mHwc.getLastRetireFence(mDisplayId);
+         VDS_LOGV("onFrameCommitted: queue sink sslot=%d", sslot);
+         status_t result = mSource[SOURCE_SINK]->queueBuffer(sslot,
+@@ -235,7 +238,11 @@ void VirtualDisplaySurface::onFrameCommitted() {
+                     NATIVE_WINDOW_SCALING_MODE_FREEZE, 0 /* transform */,
+                     true /* async*/,
+                     outFence),
++#ifdef HISILICON_HI3630
++                &qbo, &dirtyRect);
++#else
+                 &qbo);
++#endif
+         if (result == NO_ERROR) {
+             updateQueueBufferOutput(qbo);
+         }
+@@ -362,9 +369,13 @@ status_t VirtualDisplaySurface::dequeueBuffer(int* pslot, sp<Fence>* fence, bool
+     }
+     return result;
+ }
+-
++#ifdef HISILICON_HI3630
++status_t VirtualDisplaySurface::queueBuffer(int pslot,
++        const QueueBufferInput& input, QueueBufferOutput* output, Rect* dirtyRect) {
++#else
+ status_t VirtualDisplaySurface::queueBuffer(int pslot,
+         const QueueBufferInput& input, QueueBufferOutput* output) {
++#endif
+     VDS_LOGW_IF(mDbgState != DBG_STATE_GLES,
+             "Unexpected queueBuffer(pslot=%d) in %s state", pslot,
+             dbgStateStr());
+@@ -377,7 +388,11 @@ status_t VirtualDisplaySurface::queueBuffer(int pslot,
+         // Queue the buffer back into the scratch pool
+         QueueBufferOutput scratchQBO;
+         int sslot = mapProducer2SourceSlot(SOURCE_SCRATCH, pslot);
++#ifdef HISILICON_HI3630
++        result = mSource[SOURCE_SCRATCH]->queueBuffer(sslot, input, &scratchQBO, dirtyRect);
++#else
+         result = mSource[SOURCE_SCRATCH]->queueBuffer(sslot, input, &scratchQBO);
++#endif
+         if (result != NO_ERROR)
+             return result;
+ 
+diff --git a/frameworks/native/services/surfaceflinger/DisplayHardware/VirtualDisplaySurface.h b/frameworks/native/services/surfaceflinger/DisplayHardware/VirtualDisplaySurface.h
+index d1a5897..6cef72e 100644
+--- a/frameworks/native/services/surfaceflinger/DisplayHardware/VirtualDisplaySurface.h
++++ b/frameworks/native/services/surfaceflinger/DisplayHardware/VirtualDisplaySurface.h
+@@ -98,8 +98,13 @@ private:
+     virtual status_t setBufferCount(int bufferCount);
+     virtual status_t dequeueBuffer(int* pslot, sp<Fence>* fence, bool async,
+             uint32_t w, uint32_t h, uint32_t format, uint32_t usage);
++#ifdef HISILICON_HI3630
++    virtual status_t queueBuffer(int pslot,
++            const QueueBufferInput& input, QueueBufferOutput* output, Rect* dirtyRect);
++#else
+     virtual status_t queueBuffer(int pslot,
+             const QueueBufferInput& input, QueueBufferOutput* output);
++#endif
+     virtual void cancelBuffer(int pslot, const sp<Fence>& fence);
+     virtual int query(int what, int* value);
+     virtual status_t connect(const sp<IBinder>& token,

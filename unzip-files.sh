@@ -3,7 +3,7 @@
 VENDOR=huawei
 DEVICE=h60_l01
 
-UPDATE_PACKAGE=~/huawei/h60_l01.zip
+UPDATE_PACKAGE=~/huawei/EMUI_3.0_H60_L01.zip
 
 BASE=../../../vendor/$VENDOR/$DEVICE/proprietary
 rm -rf $BASE/*
