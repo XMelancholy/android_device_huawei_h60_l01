@@ -65,10 +65,12 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/prebuilt/system/usr/keylayout/Vendor_1689_Product_fd00.kl:system/usr/keylayout/Vendor_1689_Product_fd00.kl \
     $(LOCAL_PATH)/prebuilt/system/usr/keylayout/Vendor_1689_Product_fd01.kl:system/usr/keylayout/Vendor_1689_Product_fd01.kl \
     $(LOCAL_PATH)/prebuilt/system/usr/keylayout/Vendor_1689_Product_fe00.kl:system/usr/keylayout/Vendor_1689_Product_fe00.kl \
-    $(LOCAL_PATH)/prebuilt/system/usr/keylayout/Vendor_2378_Product_100a.kl:system/usr/keylayout/Vendor_2378_Product_100a.kl
+    $(LOCAL_PATH)/prebuilt/system/usr/keylayout/Vendor_2378_Product_100a.kl:system/usr/keylayout/Vendor_2378_Product_100a.kl \
+    $(LOCAL_PATH)/prebuilt/system/usr/idc/cyttsp4_mt.idc:system/usr/idc/cyttsp4_mt.idc \
+    $(LOCAL_PATH)/prebuilt/system/usr/idc/fingerprint.idc:system/usr/idc/fingerprint.idc
 
 # Ramdisk
-PRODUCT_COPY_FILES := \
+PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/prebuilt/root/fstab.hi3630:root/fstab.hi3630 \
     $(LOCAL_PATH)/prebuilt/root/init.hi3630.rc:root/init.hi3630.rc \
     $(LOCAL_PATH)/prebuilt/root/init.hi3630.usb.rc:root/init.hi3630.usb.rc \
@@ -102,13 +104,14 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/prebuilt/system/etc/gps.conf:system/etc/gps.conf \
     $(LOCAL_PATH)/prebuilt/system/etc/gpsconfig.xml:system/etc/gpsconfig.xml \
-    $(LOCAL_PATH)/prebuilt/system/etc/gpsconfig_cl.xml:system/etc/gps47531config_cl.xml \
+    $(LOCAL_PATH)/prebuilt/system/etc/gpsconfig_cl.xml:system/etc/gpsconfig_cl.xml \
     $(LOCAL_PATH)/prebuilt/system/etc/gpsconfig_tlg.xml:system/etc/gpsconfig_tlg.xml
 
-
-# Lights
-PRODUCT_PACKAGES += \
-    lights.hi3630
+# Use prebuild kernel modules
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/prebuilt/system/lib/modules/pppoe.ko:system/lib/modules/pppoe.ko \
+    $(LOCAL_PATH)/prebuilt/system/lib/modules/rng-core.ko:system/lib/modules/rng-core.ko \
+    $(LOCAL_PATH)/prebuilt/system/lib/modules/tcrypt.ko:system/lib/modules/tcrypt.ko
 
 # Media
 PRODUCT_COPY_FILES += \
@@ -123,14 +126,10 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/prebuilt/system/etc/camera_resolutions.cfg:system/etc/camera_resolutions.cfg \
     $(LOCAL_PATH)/prebuilt/system/etc/camera_videosnapshot.cfg:system/etc/camera_videosnapshot.cfg
 
-#PRODUCT_COPY_FILES += \
-#    $(LOCAL_PATH)/zImage:kernel
-
 PRODUCT_PACKAGES += \
-    mkbootimg-h60 \
-    unpackbootimg-h60 \
 	 charger-h60
 
+# Audio
 PRODUCT_PACKAGES += \
     audio.a2dp.default \
     audio.usb.default \
@@ -142,6 +141,11 @@ PRODUCT_PACKAGES += \
     tinymix \
     tinypcminfo
 
+# Lights
+PRODUCT_PACKAGES += \
+    lights.hi3630
+
+# WI-FI
 PRODUCT_PACKAGES += \
     libnetcmdiface
 
@@ -149,17 +153,9 @@ PRODUCT_PROPERTY_OVERRIDES += \
     wifi.interface=wlan0 \
     wifi.supplicant_scan_interval=15
 
-PRODUCT_PACKAGES += \
-    camera.hi3630
-
 # Graphics
-PRODUCT_PACKAGES += \
-	libsurfaceflinger_client
-
 PRODUCT_PROPERTY_OVERRIDES += \
-    ro.opengles.version=196608
-
-PRODUCT_PROPERTY_OVERRIDES += \
+    ro.opengles.version=196608 \
     ro.sf.lcd_density=480
 
 # RIL
@@ -172,6 +168,10 @@ PRODUCT_PROPERTY_OVERRIDES += \
     telephony.lteOnCdmaDevice=0 \
     telephony.lteOnGsmDevice=1 \
     ro.telephony.default_network=9
+
+# Set default USB interface
+PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+    persist.sys.usb.config=mtp
 
 # Live Wallpapers
 PRODUCT_PACKAGES += \
@@ -215,10 +215,6 @@ PRODUCT_COPY_FILES += \
 $(call inherit-product, vendor/cm/config/nfc_enhanced.mk)
 
 PRODUCT_TAGS += dalvik.gc.type-precise
-
-# Set default USB interface
-PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
-    persist.sys.usb.config=mtp
 
 PRODUCT_AAPT_CONFIG := normal hdpi xhdpi xxhdpi
 PRODUCT_AAPT_PREF_CONFIG := xxhdpi

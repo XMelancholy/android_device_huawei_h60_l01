@@ -48,30 +48,24 @@ BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := device/huawei/h60_l01/bluetooth
 # Camera
 BOARD_CAMERA_HAVE_ISO := true
 COMMON_GLOBAL_CFLAGS += -DHAVE_ISO
-#USE_CAMERA_STUB := true
 USE_CAMERA_STUB := false
 
 # Kernel information
-BOARD_KERNEL_CMDLINE  := 'ro.boot.hardware=hi3630 vmalloc=384M mem=2044m@0x200000 psci=enable androidboot.selinux=permissive mmcparts=mmcblk0:p1(vrl),p2(vrl_backup),p7(modemnvm_factory),p18(splash),p22(dfx),p23(modemnvm_backup),p24(modemnvm_img),p25(modemnvm_system),p26(modem),p27(modem_dsp),p28(modem_om),p29(modemnvm_update),p30(3rdmodem),p31(3rdmodemnvm),p32(3rdmodemnvmbkp)'
+BOARD_KERNEL_CMDLINE  := ro.boot.hardware=hi3630 vmalloc=384M mem=2044m@0x200000 psci=enable androidboot.selinux=permissive mmcparts=mmcblk0:p1(vrl),p2(vrl_backup),p7(modemnvm_factory),p18(splash),p22(dfx),p23(modemnvm_backup),p24(modemnvm_img),p25(modemnvm_system),p26(modem),p27(modem_dsp),p28(modem_om),p29(modemnvm_update),p30(3rdmodem),p31(3rdmodemnvm),p32(3rdmodemnvmbkp)
+BOARD_KERNEL_BASE     := 0x00600000
 BOARD_KERNEL_PAGESIZE := 2048
-BOARD_KERNEL_BASE     := 0x00000000
-BOARD_KERNEL_OFFSET   := 0x00608000
-BOARD_RAMDISK_OFFSET  := 0x00300000
-BOARD_SECOND_OFFSET   := 0x01500000
-BOARD_TAGS_OFFSET     := 0x00200000
-
-BOARD_MKBOOTIMG_ARGS += --kernel_offset "$(BOARD_KERNEL_OFFSET)"
-BOARD_MKBOOTIMG_ARGS += --ramdisk_offset "$(BOARD_RAMDISK_OFFSET)"
-BOARD_MKBOOTIMG_ARGS += --second_offset "$(BOARD_SECOND_OFFSET)"
-BOARD_MKBOOTIMG_ARGS += --tags_offset "$(BOARD_TAGS_OFFSET)"
-
-#BOARD_KERNEL_IMAGE_NAME := zImage
-#TARGET_PREBUILT_KERNEL := device/huawei/h60_l01/zImage
+BOARD_MKBOOTIMG_ARGS := --kernel_offset 0x00008000 --ramdisk_offset 0xffd00000 --tags_offset 0xffc00000
 
 # Custom boot
-BOARD_CUSTOM_KERNEL_MK := device/huawei/h60_l01/kernel.mk
-TARGET_KERNEL_CONFIG := cm_hi3630_defconfig
-TARGET_KERNEL_SOURCE := kernel/huawei/h60
+BOARD_CUSTOM_BOOTIMG_MK := device/huawei/h60_l01/mkbootimg.mk
+
+# Custom kernel
+#BOARD_CUSTOM_KERNEL_MK := device/huawei/h60_l01/kernel.mk
+#TARGET_KERNEL_CONFIG := cm_hi3630_defconfig
+#TARGET_KERNEL_SOURCE := kernel/huawei/h60
+
+# Use Prebuild kernel
+TARGET_PREBUILT_KERNEL := device/huawei/h60_l01/kernel
 
 # Graphics
 USE_OPENGL_RENDERER := true
@@ -114,9 +108,6 @@ COMMON_GLOBAL_CFLAGS += -D__ARM_USE_PLD -D__ARM_CACHE_LINE_SIZE=64
 # Init
 TARGET_PROVIDES_INIT := true
 TARGET_PROVIDES_INIT_TARGET_RC := true
-
-# Libc extensions
-#BOARD_PROVIDES_ADDITIONAL_BIONIC_STATIC_LIBS += libc_huawei_symbols
 
 # ION
 BOARD_USE_CUSTOM_LIBION := true

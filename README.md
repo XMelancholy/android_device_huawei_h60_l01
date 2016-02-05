@@ -17,6 +17,9 @@ Now connect your phone which have runing CM11 :
 		cd device/huawei/h60_l01
 		./extract-files.sh
 
+OR
+		./unzip-files.sh
+
 		cd ../../..
 		mkdir -p kernel/huawei
 		git clone https://github.com/XMelancholy/android_kernel_huawei_h60 -b cm-11 kernel/huawei/h60
@@ -48,5 +51,7 @@ You are ready to build :
 		source build/envsetup.sh
 		lunch cm_h60_l01-userdebug
 		make otapackage
+OR
+		brunch h60_l01
 
 ENJOY!

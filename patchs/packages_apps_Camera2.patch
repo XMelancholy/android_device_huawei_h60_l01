@@ -11,7 +11,7 @@ index a0c1358..c62717e 100755
    <string name="pref_camera_picturesize_entry_6mp_wide">600 万像素 (16:9)</string>
    <string name="pref_camera_picturesize_entry_4_5mp">450 万像素</string>
    <string name="pref_camera_picturesize_entry_4mp">400 万像素</string>
-+  <string name="pref_camera_picturesize_entry_3.8mp">380 万像素</string>
++  <string name="pref_camera_picturesize_entry_3_8mp">380 万像素</string>
    <string name="pref_camera_picturesize_entry_3_7mp_wide">370 万像素 (16:9)</string>
    <string name="pref_camera_picturesize_entry_2_5mp">250 万像素</string>
    <string name="pref_camera_picturesize_entry_2_1mp_wide">210 万像素 (16:9)</string>

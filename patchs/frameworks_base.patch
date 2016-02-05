@@ -1,0 +1,94 @@
+#	modified:   frameworks/base/media/jni/Android.mk
+#	modified:   frameworks/base/media/jni/android_media_MediaPlayer.cpp
+#  modified:   frameworks/base/media/jni/android_media_MediaProfiles.cpp
+#	modified:   frameworks/base/media/jni/android_media_MediaRecorder.cpp
+
+diff --git a/frameworks/base/media/jni/Android.mk b/frameworks/base/media/jni/Android.mk
+index 83e9c43..95bf2fd 100755
+--- a/frameworks/base/media/jni/Android.mk
++++ b/frameworks/base/media/jni/Android.mk
+@@ -45,6 +45,10 @@ LOCAL_SHARED_LIBRARIES := \
+     libexif \
+     libstagefright_amrnb_common \
+ 
++ifeq ($(TARGET_BOARD_PLATFORM), hi3630)
++    LOCAL_SHARED_LIBRARIES +=  libgnuexif
++endif
++
+ LOCAL_REQUIRED_MODULES := \
+     libjhead_jni
+ 
+diff --git a/frameworks/base/media/jni/android_media_MediaPlayer.cpp b/frameworks/base/media/jni/android_media_MediaPlayer.cpp
+index 19b73bd..ed61b42 100755
+--- a/frameworks/base/media/jni/android_media_MediaPlayer.cpp
++++ b/frameworks/base/media/jni/android_media_MediaPlayer.cpp
+@@ -816,6 +816,7 @@ android_media_MediaPlayer_setNextMediaPlayer(JNIEnv *env, jobject thiz, jobject
+ static jboolean
+ android_media_MediaPlayer_suspend(JNIEnv *env, jobject thiz)
+ {
++#ifndef HISILICON_HI3630
+     sp<MediaPlayer> mp = getMediaPlayer(env, thiz);
+     if (mp == NULL) {
+         jniThrowException(env, "java/lang/IllegalStateException", NULL);
+@@ -827,11 +828,15 @@ android_media_MediaPlayer_suspend(JNIEnv *env, jobject thiz)
+     }
+ 
+     return true;
++#else
++    return false;
++#endif
+ }
+ 
+ static jboolean
+ android_media_MediaPlayer_resume(JNIEnv *env, jobject thiz)
+ {
++#ifndef HISILICON_HI3630
+     sp<MediaPlayer> mp = getMediaPlayer(env, thiz);
+     if (mp == NULL) {
+         jniThrowException(env, "java/lang/IllegalStateException", NULL);
+@@ -843,6 +848,9 @@ android_media_MediaPlayer_resume(JNIEnv *env, jobject thiz)
+     }
+ 
+     return true;
++#else
++    return false;
++#endif
+ }
+ 
+ static void
+diff --git a/frameworks/base/media/jni/android_media_MediaProfiles.cpp b/frameworks/base/media/jni/android_media_MediaProfiles.cpp
+index fa6c4ec..7dc459f 100755
+--- a/frameworks/base/media/jni/android_media_MediaProfiles.cpp
++++ b/frameworks/base/media/jni/android_media_MediaProfiles.cpp
+@@ -91,10 +91,15 @@ android_media_MediaProfiles_native_get_video_encoder_cap(JNIEnv *env, jobject th
+     int maxFrameWidth = sProfiles->getVideoEncoderParamByName("enc.vid.width.max", encoder);
+     int minFrameHeight = sProfiles->getVideoEncoderParamByName("enc.vid.height.min", encoder);
+     int maxFrameHeight = sProfiles->getVideoEncoderParamByName("enc.vid.height.max", encoder);
++#ifndef HISILICON_HI3630
+     int maxHFRFrameWidth = sProfiles->getVideoEncoderParamByName("enc.vid.hfr.width.max", encoder);
+     int maxHFRFrameHeight = sProfiles->getVideoEncoderParamByName("enc.vid.hfr.height.max", encoder);
+     int maxHFRMode = sProfiles->getVideoEncoderParamByName("enc.vid.hfr.mode.max", encoder);
+-
++#else
++    int maxHFRFrameWidth = 0;
++    int maxHFRFrameHeight = 0;
++    int maxHFRMode = 0;
++#endif
+     // Check on the values retrieved
+     if ((minBitRate == -1 || maxBitRate == -1) ||
+         (minFrameRate == -1 || maxFrameRate == -1) ||
+diff --git a/frameworks/base/media/jni/android_media_MediaRecorder.cpp b/frameworks/base/media/jni/android_media_MediaRecorder.cpp
+index eff4977..29bb370 100755
+--- a/frameworks/base/media/jni/android_media_MediaRecorder.cpp
++++ b/frameworks/base/media/jni/android_media_MediaRecorder.cpp
+@@ -356,8 +356,10 @@ static void
+ android_media_MediaRecorder_pause(JNIEnv *env, jobject thiz)
+ {
+     ALOGV("pause");
++#ifndef HISILICON_HI3630
+     sp<MediaRecorder> mr = getMediaRecorder(env, thiz);
+     process_media_recorder_call(env, mr->pause(), "java/lang/RuntimeException", "pause failed.");
++#endif
+ }
+ 
+ static void

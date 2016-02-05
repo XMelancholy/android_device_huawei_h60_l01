@@ -168,6 +168,7 @@ etc/audio/tfa9887/BELLA_TLGULG/ce/voip/voip.preset
 etc/audio/tfa9887/BELLA_TLGULG/ce/voip/voip.eq
 etc/audio/tfa9887/BELLA_TLGULG/ce/ringtone/ringtone.preset
 etc/audio/tfa9887/BELLA_TLGULG/ce/ringtone/ringtone.eq
+etc/audio/tfa9887/BELLA_TLGULG/ce/fm/fm.eq
 etc/audio/tfa9887/BELLA_TLGULG/ce/fm/fm.preset
 etc/audio/tfa9887/BELLA_TLGULG/ce/ringtone_hs_spk/ringtone_hs_spk.eq
 etc/audio/tfa9887/BELLA_TLGULG/ce/ringtone_hs_spk/ringtone_hs_spk.preset
@@ -297,6 +298,7 @@ etc/audio/algorithm/algorithm_BELLA_ULG_normal.xml
 etc/audio/algorithm/algorithm_PINE_TLGULG_normal.xml
 etc/audio/algorithm/algorithm_MOGOLIA_ULCA_normal.xml
 etc/audio/algorithm/algorithm_JAZZ_CLG_normal.xml
+#etc/audio/algorithm/algorithm_PINE_CLG_normal.xml
 etc/audio/dts/ascend_dts_algo_MOGOLIA_ULG_normal.xml
 etc/audio/dts/ascend_dts_algo_MOGOLIA_TL_normal.xml
 etc/audio/dts/ascend_dts_algo_JAZZ_CLG_normal.xml
@@ -446,7 +448,7 @@ lib/hw/gpscl.default.so
 lib/hw/audio.r_submix.default.so
 lib/hw/audio.a2dp.default.so
 lib/hw/power.hi3630.so
-lib/hw/sensorhub.default.so
+lib/hw/sensors.hi3630.so
 lib/hw/gps.default.so
 lib/hw/camera.hi3630.so
 lib/hw/audio.primary.default.so
@@ -454,7 +456,7 @@ lib/hw/copybit.hi3630.so
 lib/hw/audio.primary.hi3630.so
 lib/hw/audio_policy.default.so
 lib/hw/memtrack.hi3630.so
-lib/hw/nfc_nci_pn547.hi3630.so
+lib/hw/nfc.hi3630.so
 lib/hw/keystore.hi3630.so
 lib/libaudioflinger.huawei.so
 lib/libaudioalgoservice_jni.so
